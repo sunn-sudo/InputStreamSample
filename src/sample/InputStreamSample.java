@@ -8,6 +8,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import model.DataBean;
@@ -17,24 +18,29 @@ public class InputStreamSample {
 	public static void main(String[] args) {
 		/* ファイル読み込み処理 */
 		InputStream fileStream = getFile();
-
-		/* ファイルよりIDと金額を金額管理モデルに設定して金額管理モデルリストに追加する */
 		InputStreamReader fileStreamReader = new InputStreamReader(fileStream);
 		Stream<String> streamOfString = new BufferedReader(fileStreamReader).lines();
+		List<String> items = streamOfString.collect(Collectors.toList());
 
-		// TODO ファイル分割して一部を表示する
+		/* ファイル分割処理 */
+		List<List<String>> partitions = new ArrayList<List<String>>();
+		int partitionSize = 10;
+		for (int i = 0; i < items.size(); i += partitionSize) {
+			partitions.add(items.subList(i, Math.min(i + partitionSize, items.size())));
+		}
+		System.out.println(partitions);
 
-		// 金額管理モデルリストを生成する
+		/* ファイルよりIDと金額を金額管理モデルに設定して金額管理モデルリストに追加する */
 		List<DataBean> dataList = new ArrayList<DataBean>();
-		streamOfString.forEach(list -> {
+		for(String item :partitions.get(0)) {
 			// CSVリストを生成する
-			String[] csvList = list.split(",");
+			String[] csvList = item.split(","); 
 			// 金額管理モデルを生成する
 			DataBean data = new DataBean();
 			data.setId(csvList[0]);
 			data.setMoney(csvList[1]);
 			dataList.add(data);
-		});
+		};
 
 		// 処理結果
 		for (int index = 0; index < dataList.size(); index++) {
