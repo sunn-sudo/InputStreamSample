@@ -13,6 +13,7 @@ import java.util.stream.Stream;
 
 import model.DataBean;
 
+/** ファイル読み込み処理サンプル */
 public class InputStreamSample {
 
 	public static void main(String[] args) {
